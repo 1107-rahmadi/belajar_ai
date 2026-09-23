@@ -1,0 +1,41 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+/vendor/
+/composer.phar
+/composer.lock
+/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+*.sublime-project
+
+# Logs
+*.log
+/logs/
+/var/log/
+
+# Cache
+/cache/
+/tmp/
+/temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+/public/build/
+/public/dist/
+
+# Uploads (jika ada file upload user)
+/uploads/
+
+# Secret keys
+*.pem
+*.key
