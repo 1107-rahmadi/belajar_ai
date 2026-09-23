@@ -16,6 +16,9 @@ require_once __DIR__ . '/../config/database.php';
 // Load helpers
 require_once APP_PATH . '/helpers/auth.php';
 
+// Load AuthController untuk route login/logout
+require_once CONTROLLER_PATH . '/AuthController.php';
+
 /**
  * Routing Sederhana
  *
@@ -26,11 +29,26 @@ require_once APP_PATH . '/helpers/auth.php';
  */
 
 // Ambil URI dari request
-$requestUri = $_SERVER['REQUEST_URI'];
-$scriptName = dirname($_SERVER['SCRIPT_NAME']);
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
 
-// Hapus base path dari URI
-$uri = str_replace($scriptName, '', $requestUri);
+// Normalisasi path (handle Windows backslash)
+$scriptName = str_replace('\\', '/', $scriptName);
+$requestUri = str_replace('\\', '/', $requestUri);
+
+// Ambil base path dari script name (folder aplikasi)
+$basePath = dirname($scriptName);
+if ($basePath === '/' || $basePath === '\\' || $basePath === '') {
+    $basePath = '';
+}
+
+// Hapus base path dari URI jika ada
+if (!empty($basePath)) {
+    $uri = str_replace($basePath, '', $requestUri);
+} else {
+    $uri = $requestUri;
+}
+
 $uri = parse_url($uri, PHP_URL_PATH);
 $uri = trim($uri, '/');
 
