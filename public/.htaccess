@@ -1,0 +1,14 @@
+# Aktifkan rewrite engine
+RewriteEngine On
+
+# Base path: /belajar_ai/public/
+RewriteBase /belajar_ai/public/
+
+# Jika file fisik ada, langsung serve
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Jika folder fisik ada, langsung serve
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite semua request ke index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
