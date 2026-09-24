@@ -124,6 +124,14 @@ class MutasiSaldo
      */
     public function create(array $data): bool
     {
+        // Validasi field yang wajib ada
+        $requiredFields = ['nasabah_id', 'tipe', 'jumlah', 'saldo_setelah'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field]) || $data[$field] === '') {
+                throw new InvalidArgumentException("Field '$field' wajib diisi untuk MutasiSaldo::create()");
+            }
+        }
+
         $stmt = $this->db->prepare("
             INSERT INTO mutasi_saldo
             (nasabah_id, tipe, jumlah, saldo_setelah, referensi_tipe, referensi_id, keterangan)
@@ -132,12 +140,12 @@ class MutasiSaldo
         ");
 
         $params = [
-            'nasabah_id' => $data['nasabah_id'],
-            'tipe' => $data['tipe'],
-            'jumlah' => $data['jumlah'],
-            'saldo_setelah' => $data['saldo_setelah'],
+            'nasabah_id' => (int) $data['nasabah_id'],
+            'tipe' => trim($data['tipe']),
+            'jumlah' => (float) $data['jumlah'],
+            'saldo_setelah' => (float) $data['saldo_setelah'],
             'referensi_tipe' => $data['referensi_tipe'] ?? null,
-            'referensi_id' => $data['referensi_id'] ?? null,
+            'referensi_id' => isset($data['referensi_id']) ? (int) $data['referensi_id'] : null,
             'keterangan' => $data['keterangan'] ?? null
         ];
 

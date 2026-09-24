@@ -936,16 +936,22 @@ class PengelolaController
 
         if ($success) {
             // Kurangi saldo农户 (updateSaldo menerima nilai negatif untuk mengurangi)
-            $this->nasabahModel->updateSaldo($pengajuan['nasabah_id'], -$pengajuan['jumlah']);
+            $jumlahPencairan = (float) $pengajuan['jumlah'];
+            $this->nasabahModel->updateSaldo($pengajuan['nasabah_id'], -$jumlahPencairan);
+
+            // Hitung saldo setelah pencairan
+            $nasabah = $this->nasabahModel->findById($pengajuan['nasabah_id']);
+            $saldoSetelah = $nasabah ? (float) $nasabah['saldo_tersedia'] : 0;
 
             // Catat mutasi saldo
             $this->mutasiModel->create([
                 'nasabah_id' => $pengajuan['nasabah_id'],
-                'jenis' => 'PENCAIRAN',
-                'jumlah' => $pengajuan['jumlah'],
-                'referensi' => $pengajuan['no_pengajuan'],
-                'keterangan' => 'Pencairan tabungan - ' . $pengajuan['metode'],
-                'admin_id' => currentUserId()
+                'tipe' => 'PENCAIRAN',
+                'jumlah' => $jumlahPencairan,
+                'saldo_setelah' => $saldoSetelah,
+                'referensi_tipe' => 'pengajuan_pencairan',
+                'referensi_id' => $id,
+                'keterangan' => 'Pencairan tabungan - ' . ($pengajuan['metode'] ?? '')
             ]);
 
             setFlashMessage('success', 'Pengajuan ' . $pengajuan['no_pengajuan'] . ' telah dicairkan dan saldo农户 dikurangi.');
